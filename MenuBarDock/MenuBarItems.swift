@@ -26,6 +26,7 @@ class MenuBarItems {
 	public weak var delegate: MenuBarItemsDelegate?
 
 	private(set) var items: [MenuBarItem] // ordered left to right
+	private var currentBadges: [String: String] = [:]
 
 	init(
 		userPrefsDataSource: MenuBarItemsUserPrefsDataSource
@@ -54,7 +55,12 @@ class MenuBarItems {
 			let offset = items.count - openableApps.apps.count
 			let item = items[index + offset]
 			showItem(item: item)
-			item.update(for: app, appIconSize: userPrefsDataSource.appIconSize, slotWidth: userPrefsDataSource.itemSlotWidth)
+			item.update(
+				for: app,
+				appIconSize: userPrefsDataSource.appIconSize,
+				slotWidth: userPrefsDataSource.itemSlotWidth,
+				badge: currentBadges[app.name]
+			)
 		}
 
 		// hide the leftmost items not being used (so the weird gap glitch is as left as possible)
@@ -108,6 +114,18 @@ extension MenuBarItems: MenuBarItemDataSource {
 
 	func appOpeningMethod(for app: OpenableApp) -> AppOpeningMethod? {
 		return userPrefsDataSource.appOpeningMethods[app.id]
+	}
+}
+
+extension MenuBarItems: BadgeMonitorDelegate {
+	func badgesDidChange(_ badges: [String: String], changedAppNames: [String]) {
+		currentBadges = badges
+		let changedSet = Set(changedAppNames)
+		for item in items {
+			if let itemApp = item.app, changedSet.contains(itemApp.name) {
+				item.updateBadge(badges[itemApp.name])
+			}
+		}
 	}
 }
 

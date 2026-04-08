@@ -18,6 +18,7 @@ protocol PreferencesViewControllerDelegate: AnyObject {
     func hideDuplicateAppsDidChange(_ value: Bool)
     func preserveAppOrderDidChange(_ value: Bool)
     func rightClickByDefaultDidChange(_ value: Bool)
+    func showDockBadgesDidChange(_ value: Bool)
 
     // Regular Apps
     func regularAppsUrlsWereAdded(_ value: [URL])
@@ -48,6 +49,7 @@ protocol PreferencesViewControllerUserPrefsDataSource: AnyObject {
     var hideDuplicateApps: Bool { get }
     var preserveAppOrder: Bool { get }
     var rightClickByDefault: Bool { get }
+    var showDockBadges: Bool { get }
 
     // Regular Apps
     var regularAppsUrls: [URL] { get }
@@ -77,6 +79,7 @@ class PreferencesViewController: NSViewController { // this should do nothing
     @IBOutlet weak var hideDuplicateAppsButton: NSButton!
     @IBOutlet weak var preserveAppOrderButton: NSButton!
     @IBOutlet weak var rightClickByDefaultButton: NSButton!
+    @IBOutlet weak var showDockBadgesButton: NSButton!
 
     // Regular Apps
     @IBOutlet weak var regularAppsTable: NSTableView!
@@ -129,6 +132,7 @@ class PreferencesViewController: NSViewController { // this should do nothing
         hideDuplicateAppsButton.state = userPrefsDataSource.hideDuplicateApps ? .on : .off
         preserveAppOrderButton.state = userPrefsDataSource.preserveAppOrder ? .on : .off
         rightClickByDefaultButton.state = userPrefsDataSource.rightClickByDefault ? .on : .off
+        showDockBadgesButton.state = userPrefsDataSource.showDockBadges ? .on : .off
 
         // Regular Apps
         if userPrefsDataSource.regularAppsUrls.count > 0 {
@@ -266,6 +270,12 @@ class PreferencesViewController: NSViewController { // this should do nothing
 
     @IBAction func rightClickByDefaultPressed(_ sender: NSButton) {
         delegate?.rightClickByDefaultDidChange(sender.state == .on)
+    }
+
+    @IBAction func showDockBadgesPressed(_ sender: NSButton) {
+        delegate?.showDockBadgesDidChange(sender.state == .on)
+        // Delegate may have rolled the pref back (AX denied) — resync the checkbox.
+        updateUi()
     }
 
 	@IBAction func addOrRemovePressed(_ sender: NSSegmentedControl) {

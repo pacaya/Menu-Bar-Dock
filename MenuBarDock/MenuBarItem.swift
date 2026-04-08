@@ -22,6 +22,7 @@ protocol MenuBarItemDelegate: AnyObject {
 class MenuBarItem {
 	private(set) var statusItem: NSStatusItem
 	private(set) var app: OpenableApp?
+	private var currentIconSize: CGFloat = 0
 
 	public var position: CGFloat {
 		return statusItem.button!.superview!.window!.frame.minX
@@ -40,8 +41,9 @@ class MenuBarItem {
 
 	}
 
-	func update(for app: OpenableApp, appIconSize: CGFloat, slotWidth: CGFloat) {
+	func update(for app: OpenableApp, appIconSize: CGFloat, slotWidth: CGFloat, badge: String?) {
 		self.app = app
+		self.currentIconSize = appIconSize
  		let imageSize = appIconSize
         let menuBarHeight: CGFloat = 22 // do not use NSApplication.shared.mainMenu?.menuBarHeight, it doesn't work on MBP 16 inch with notch, because the menu bar reports as bigger than the actual height it uses. 22 is a good fixed height.
 		let newView = NSImageView(
@@ -52,8 +54,7 @@ class MenuBarItem {
 		)
 
 		app.icon.size = NSSize(width: imageSize, height: imageSize)
-
-		newView.image = app.icon
+		newView.image = BadgeRenderer.compose(icon: app.icon, badge: badge, iconSize: imageSize)
 		newView.wantsLayer = true
 
 		if let existingSubview = statusItem.button?.subviews.first as? NSImageView {
@@ -63,6 +64,14 @@ class MenuBarItem {
 		}
 
 		statusItem.length = slotWidth
+	}
+
+	/// Narrow redraw: re-composite the icon image on the existing NSImageView
+	/// without rebuilding the status item's subview tree.
+	func updateBadge(_ badge: String?) {
+		guard let app = self.app,
+		      let imageView = statusItem.button?.subviews.first as? NSImageView else { return }
+		imageView.image = BadgeRenderer.compose(icon: app.icon, badge: badge, iconSize: currentIconSize)
 	}
 
 	func reset() {

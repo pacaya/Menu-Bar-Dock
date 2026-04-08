@@ -29,6 +29,8 @@
 		384CBEAB26226677000B08FC /* MenuBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384CBEAA26226677000B08FC /* MenuBarItem.swift */; };
 		384CBEB926227329000B08FC /* OpenableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384CBEB826227329000B08FC /* OpenableApp.swift */; };
 		384CBEBF262276A9000B08FC /* OpenableApps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384CBEBE262276A9000B08FC /* OpenableApps.swift */; };
+		38BADE0100000001A6B6A0DD /* BadgeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BADE0000000001A6B6A0DD /* BadgeMonitor.swift */; };
+		38BADE0300000001A6B6A0DD /* BadgeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BADE0200000001A6B6A0DD /* BadgeRenderer.swift */; };
 		3875B2B6222E1EF70042D748 /* Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38E394E3222D778F006F926E /* Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		38D723EB222D8D8600D6F079 /* Launcher.app in Resources */ = {isa = PBXBuildFile; fileRef = 38E394E3222D778F006F926E /* Launcher.app */; };
 		38E394E6222D778F006F926E /* AppDelegateLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E394E5222D778F006F926E /* AppDelegateLauncher.swift */; };
@@ -111,6 +113,8 @@
 		384CBEAA26226677000B08FC /* MenuBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItem.swift; sourceTree = "<group>"; };
 		384CBEB826227329000B08FC /* OpenableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenableApp.swift; sourceTree = "<group>"; };
 		384CBEBE262276A9000B08FC /* OpenableApps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenableApps.swift; sourceTree = "<group>"; };
+		38BADE0000000001A6B6A0DD /* BadgeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeMonitor.swift; sourceTree = "<group>"; };
+		38BADE0200000001A6B6A0DD /* BadgeRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeRenderer.swift; sourceTree = "<group>"; };
 		38E394E3222D778F006F926E /* Launcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Launcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		38E394E5222D778F006F926E /* AppDelegateLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateLauncher.swift; sourceTree = "<group>"; };
 		38E394E9222D7790006F926E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -225,6 +229,8 @@
 				384CBEA426226333000B08FC /* MenuBarItems.swift */,
 				384CBEB826227329000B08FC /* OpenableApp.swift */,
 				384CBEBE262276A9000B08FC /* OpenableApps.swift */,
+				38BADE0000000001A6B6A0DD /* BadgeMonitor.swift */,
+				38BADE0200000001A6B6A0DD /* BadgeRenderer.swift */,
 				384319142626487200A6B6A0 /* RunningApp.swift */,
 				384318F72624A36A00A6B6A0 /* RunningApps.swift */,
 				3843191A2626487E00A6B6A0 /* RegularApp.swift */,
@@ -582,6 +588,8 @@
 				384318F82624A36A00A6B6A0 /* RunningApps.swift in Sources */,
 				38412F02222B3E2F00D3FA0C /* PreferencesViewController.swift in Sources */,
 				384CBEBF262276A9000B08FC /* OpenableApps.swift in Sources */,
+				38BADE0100000001A6B6A0DD /* BadgeMonitor.swift in Sources */,
+				38BADE0300000001A6B6A0DD /* BadgeRenderer.swift in Sources */,
 				38412F00222B3E2F00D3FA0C /* AppDelegate.swift in Sources */,
 				384319632628EC8700A6B6A0 /* AboutViewController.swift in Sources */,
 				384CBEA526226333000B08FC /* MenuBarItems.swift in Sources */,

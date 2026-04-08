@@ -50,6 +50,8 @@ enum Constants {
         static let regularAppsUrls = "regularAppsUrls"
         static let rightClickByDefault = "rightClickByDefault"
         static let runningAppsSortingMethod = "runningAppsSortingMethod"
+        static let showDockBadges = "showDockBadges"
+        static let hasPromptedForBadgeAccessibility = "hasPromptedForBadgeAccessibility"
         static let sideToShowRunningApps = "sideToShowRunningApps"
 		static let statusItemWidth = "statusItemWidth"
 	}

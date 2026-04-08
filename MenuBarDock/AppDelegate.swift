@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	var appTracker: AppTracker!
 	var runningApps: RunningApps!
 	var regularApps: RegularApps!
+	var badgeMonitor: BadgeMonitor!
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		initApp()
@@ -31,6 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {
+		badgeMonitor?.stop()
 		userPrefs.save()
 	}
 
@@ -50,7 +52,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		openableApps = OpenableApps(userPrefsDataSource: userPrefs, runningApps: runningApps, regularApps: regularApps)
 
+		badgeMonitor = BadgeMonitor()
+		badgeMonitor.delegate = menuBarItems
+
 		updateMenuBarItems()
+
+		configureBadgeMonitorForCurrentPrefs()
+	}
+
+	/// Starts or stops the BadgeMonitor based on the current pref, handling
+	/// the first-launch AX prompt exactly once. If the user denies, the pref
+	/// is auto-unchecked silently (per user-confirmed UX).
+	private func configureBadgeMonitorForCurrentPrefs() {
+		guard userPrefs.showDockBadges else {
+			badgeMonitor.stop()
+			return
+		}
+
+		if !userPrefs.hasPromptedForBadgeAccessibility {
+			userPrefs.hasPromptedForBadgeAccessibility = true
+			userPrefs.save()
+			let granted = badgeMonitor.ensurePermission(promptIfNeeded: true)
+			if !granted {
+				userPrefs.showDockBadges = false
+				userPrefs.save()
+				return
+			}
+		} else {
+			guard badgeMonitor.ensurePermission(promptIfNeeded: false) else {
+				return // AX was revoked at some point; leave pref alone, just don't start polling
+			}
+		}
+
+		badgeMonitor.start()
 	}
 
 	func setupLaunchAtLogin() {
@@ -81,6 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	private func updateMenuBarItems() {
 		menuBarItems.update(openableApps: openableApps)
+		badgeMonitor?.setObservedApps(openableApps.apps)
 	}
 }
 
@@ -213,6 +248,22 @@ extension AppDelegate: PreferencesViewControllerDelegate {
     func rightClickByDefaultDidChange(_ value: Bool) {
         userPrefs.rightClickByDefault = value
         userPrefsWasUpdated()
+    }
+
+    func showDockBadgesDidChange(_ value: Bool) {
+        userPrefs.showDockBadges = value
+        if value {
+            let granted = badgeMonitor.ensurePermission(promptIfNeeded: true)
+            if granted {
+                badgeMonitor.start()
+            } else {
+                // Denied — roll the pref back so the checkbox reflects reality.
+                userPrefs.showDockBadges = false
+            }
+        } else {
+            badgeMonitor.stop()
+        }
+        userPrefs.save()
     }
 
 	func appOpeningMethodDidChange(_ value: AppOpeningMethod) {
