@@ -14,9 +14,7 @@ protocol MenuBarItemDataSource: AnyObject {
 }
 
 protocol MenuBarItemDelegate: AnyObject {
-	func didOpenPreferencesWindow()
 	func didSetAppOpeningMethod(_ method: AppOpeningMethod?, _ app: OpenableApp)
-
 }
 
 class MenuBarItem {
@@ -115,19 +113,32 @@ class MenuBarItem {
 		guard let appName = app?.name else { return }
 
         if let runningApplication = app?.runningApplication {
-            // only makes sense to hide and show, and activate a running app, not just any app
+            _ = addMenuItem(
+                menu: menu,
+                title: "Activate \(appName)",
+                action: #selector(activateApp),
+                keyEquivalent: "a"
+            )
+
+            _ = addMenuItem(
+                menu: menu,
+                title: "Launch \(appName)",
+                action: #selector(launchApp),
+                keyEquivalent: "l"
+            )
+
             _ = addMenuItem(
                 menu: menu,
                 title: "\(runningApplication.isHidden ? "Unhide" : "Hide") \(appName)",
                 action: #selector(toggleAppHidden),
                 keyEquivalent: "h"
             )
-
+        } else {
             _ = addMenuItem(
                 menu: menu,
-                title: "Activate \(appName)",
-                action: #selector(activateApp),
-                keyEquivalent: "a"
+                title: "Launch \(appName)",
+                action: #selector(launchApp),
+                keyEquivalent: "l"
             )
         }
 
@@ -138,12 +149,7 @@ class MenuBarItem {
 			keyEquivalent: "r"
 		)
 
-		_ = addMenuItem(
-			menu: menu,
-			title: "Launch \(appName)",
-			action: #selector(launchApp),
-			keyEquivalent: "l"
-		)
+		addAppOpeningMethodMenuItem(menu: menu)
 
         if app?.runningApplication != nil {
             _ = addMenuItem(
@@ -153,26 +159,6 @@ class MenuBarItem {
                 keyEquivalent: "q"
             )
         }
-
-		// removed open new instance item because it's kinda pointless and will probably cause bugs
-		addAppOpeningMethodMenuItem(menu: menu)
-
-		menu.addItem(NSMenuItem.separator())
-
-		// options to do with menu bar dock itself
-		_ = addMenuItem(
-			menu: menu,
-			title: "\(Constants.App.name) Preferences...", // ... is a standard...
-			action: #selector(openPreferencesWindow),
-			keyEquivalent: ","
-		)
-
-		_ = addMenuItem(
-			menu: menu,
-			title: "Quit \(Constants.App.name)",
-			action: #selector(quitMenuBarDock),
-			keyEquivalent: ""
-		)
 
 		statusItem.popUpMenu(menu)
 	}
@@ -261,11 +247,4 @@ class MenuBarItem {
 		delegate?.didSetAppOpeningMethod(userPrefsDataSource.appOpeningMethod(for: app) == .activate ? nil : .activate, app)
  	}
 
-	@objc private func openPreferencesWindow() {
-		delegate?.didOpenPreferencesWindow()
-	}
-
-	@objc private func quitMenuBarDock(_ sender: Any?) {
-		NSApp.terminate(nil)
-	}
 }

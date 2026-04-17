@@ -60,31 +60,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		configureBadgeMonitorForCurrentPrefs()
 	}
 
-	/// Starts or stops the BadgeMonitor based on the current pref, handling
-	/// the first-launch AX prompt exactly once. If the user denies, the pref
-	/// is auto-unchecked silently (per user-confirmed UX).
+	/// Starts the BadgeMonitor based on the current pref. Never shows an AX
+	/// prompt at launch — prompting only happens when the user explicitly
+	/// opts in via the Preferences checkbox. If the pref is ON but AX hasn't
+	/// been granted yet, we silently poll until it is.
 	private func configureBadgeMonitorForCurrentPrefs() {
 		guard userPrefs.showDockBadges else {
 			badgeMonitor.stop()
 			return
 		}
-
-		if !userPrefs.hasPromptedForBadgeAccessibility {
-			userPrefs.hasPromptedForBadgeAccessibility = true
-			userPrefs.save()
-			let granted = badgeMonitor.ensurePermission(promptIfNeeded: true)
-			if !granted {
-				userPrefs.showDockBadges = false
-				userPrefs.save()
-				return
-			}
-		} else {
-			guard badgeMonitor.ensurePermission(promptIfNeeded: false) else {
-				return // AX was revoked at some point; leave pref alone, just don't start polling
-			}
-		}
-
-		badgeMonitor.start()
+		badgeMonitor.waitForPermissionThenStart()
 	}
 
 	func setupLaunchAtLogin() {
@@ -127,6 +112,10 @@ extension AppDelegate: MenuBarItemsDelegate {
 
 	func didOpenPreferencesWindow() {
 		openPreferencesWindow()
+	}
+
+	func didRequestQuit() {
+		NSApp.terminate(nil)
 	}
 
 	func openPreferencesWindow() {
@@ -252,18 +241,47 @@ extension AppDelegate: PreferencesViewControllerDelegate {
 
     func showDockBadgesDidChange(_ value: Bool) {
         userPrefs.showDockBadges = value
-        if value {
-            let granted = badgeMonitor.ensurePermission(promptIfNeeded: true)
-            if granted {
-                badgeMonitor.start()
-            } else {
-                // Denied — roll the pref back so the checkbox reflects reality.
-                userPrefs.showDockBadges = false
+        userPrefs.save()
+
+        if !value {
+            badgeMonitor.stop()
+            return
+        }
+
+        if AXIsProcessTrusted() {
+            badgeMonitor.start()
+            return
+        }
+
+        // Not trusted yet. Fire the system AX prompt (async) and start
+        // polling so the monitor auto-starts when the user grants access.
+        // Then surface a clear instructional alert so the user knows what
+        // to do. Only an explicit Cancel in that alert rolls the pref back.
+        _ = badgeMonitor.ensurePermission(promptIfNeeded: true)
+        badgeMonitor.waitForPermissionThenStart()
+        presentAccessibilityInstructionsAlert()
+    }
+
+    private func presentAccessibilityInstructionsAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Accessibility permission needed"
+        alert.informativeText = "Menu Bar Dock reads badge counts from the macOS Dock using the Accessibility API.\n\nOpen System Settings → Privacy & Security → Accessibility and enable Menu Bar Dock. Badges will start appearing automatically once access is granted."
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Cancel")
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                NSWorkspace.shared.open(url)
             }
         } else {
+            // User explicitly cancelled — roll back pref, stop polling, sync UI.
+            userPrefs.showDockBadges = false
+            userPrefs.save()
             badgeMonitor.stop()
+            if let vc = preferencesWindow.contentViewController as? PreferencesViewController {
+                vc.updateUi()
+            }
         }
-        userPrefs.save()
     }
 
 	func appOpeningMethodDidChange(_ value: AppOpeningMethod) {

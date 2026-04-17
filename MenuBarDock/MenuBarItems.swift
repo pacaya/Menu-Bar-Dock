@@ -14,11 +14,15 @@ protocol MenuBarItemsUserPrefsDataSource: AnyObject {
 	var appIconSize: CGFloat { get }
     var preserveAppOrder: Bool { get }
     var rightClickByDefault: Bool { get }
+    var showDockBadges: Bool { get }
+    var showOnlyBadgedApps: Bool { get }
+    var sideToShowRunningApps: SideToShowRunningApps { get }
 }
 
 protocol MenuBarItemsDelegate: AnyObject {
 	func didOpenPreferencesWindow()
 	func didSetAppOpeningMethod(_ method: AppOpeningMethod?, _ app: OpenableApp)
+	func didRequestQuit()
 }
 
 class MenuBarItems {
@@ -27,12 +31,17 @@ class MenuBarItems {
 
 	private(set) var items: [MenuBarItem] // ordered left to right
 	private var currentBadges: [String: String] = [:]
+	private var isExpanded: Bool = false
+	private var cachedOpenableApps: OpenableApps?
+	private(set) var arrowItem: ArrowMenuBarItem
 
 	init(
 		userPrefsDataSource: MenuBarItemsUserPrefsDataSource
  	) {
 		self.userPrefsDataSource = userPrefsDataSource
 		items = []
+		arrowItem = ArrowMenuBarItem()
+		arrowItem.delegate = self
 	}
 
 	/*
@@ -47,12 +56,15 @@ class MenuBarItems {
 	func update(
 		openableApps: OpenableApps
  	) {
-		createEnoughStatusItems(openableApps: openableApps)
+		cachedOpenableApps = openableApps
+		let visible = visibleApps(from: openableApps)
+
+		createEnoughStatusItems(count: openableApps.apps.count)
 		sortItems() // sort after adding them all for efficiency. not all of them will be sorted due to layout not updating instantly, but that's fine since we have an extra item at all times.
 
 		// try and populate the rightmost items since new ones are added to the left of the menu bar
-		for (index, app) in openableApps.apps.enumerated() {
-			let offset = items.count - openableApps.apps.count
+		for (index, app) in visible.enumerated() {
+			let offset = items.count - visible.count
 			let item = items[index + offset]
 			showItem(item: item)
 			item.update(
@@ -64,16 +76,30 @@ class MenuBarItems {
 		}
 
 		// hide the leftmost items not being used (so the weird gap glitch is as left as possible)
-		for index in 0...items.count - openableApps.apps.count - 1 {
-			let item = items[index]
-			item.reset()
-			hideItem(item: item)
+		if items.count > visible.count {
+			for index in 0...(items.count - visible.count - 1) {
+				let item = items[index]
+				item.reset()
+				hideItem(item: item)
+			}
 		}
+
+		arrowItem.isExpanded = isExpanded
+		arrowItem.sideToShowRunningApps = userPrefsDataSource.sideToShowRunningApps
 	}
 
-	private func createEnoughStatusItems(openableApps: OpenableApps) {
+	private func visibleApps(from openableApps: OpenableApps) -> [OpenableApp] {
+		guard userPrefsDataSource.showDockBadges,
+		      userPrefsDataSource.showOnlyBadgedApps,
+		      !isExpanded else {
+			return openableApps.apps
+		}
+		return openableApps.apps.filter { currentBadges[$0.name]?.isEmpty == false }
+	}
+
+	private func createEnoughStatusItems(count: Int) {
 		let origItemCount = items.count
-		for index in 0...openableApps.apps.count where index >= origItemCount { // we loop to count not count - 1 so the sort order is always correct as it has sorted one item in advance. https://trello.com/c/Jz312bga
+		for index in 0...count where index >= origItemCount { // we loop to count not count - 1 so the sort order is always correct as it has sorted one item in advance. https://trello.com/c/Jz312bga
 			let statusItem = NSStatusBar.system.statusItem(withLength: userPrefsDataSource.itemSlotWidth)
 			let item = MenuBarItem(
 				statusItem: statusItem,
@@ -120,6 +146,15 @@ extension MenuBarItems: MenuBarItemDataSource {
 extension MenuBarItems: BadgeMonitorDelegate {
 	func badgesDidChange(_ badges: [String: String], changedAppNames: [String]) {
 		currentBadges = badges
+
+		let visibilitySetCanChange = userPrefsDataSource.showDockBadges
+			&& userPrefsDataSource.showOnlyBadgedApps
+			&& !isExpanded
+		if visibilitySetCanChange, let cached = cachedOpenableApps {
+			update(openableApps: cached)
+			return
+		}
+
 		let changedSet = Set(changedAppNames)
 		for item in items {
 			if let itemApp = item.app, changedSet.contains(itemApp.name) {
@@ -130,11 +165,24 @@ extension MenuBarItems: BadgeMonitorDelegate {
 }
 
 extension MenuBarItems: MenuBarItemDelegate {
-	func didOpenPreferencesWindow() {
+	func didSetAppOpeningMethod(_ method: AppOpeningMethod?, _ app: OpenableApp) {
+		delegate?.didSetAppOpeningMethod(method, app)
+	}
+}
+
+extension MenuBarItems: ArrowMenuBarItemDelegate {
+	func arrowDidToggle() {
+		isExpanded = !isExpanded
+		if let cached = cachedOpenableApps {
+			update(openableApps: cached)
+		}
+	}
+
+	func arrowDidOpenPreferences() {
 		delegate?.didOpenPreferencesWindow()
 	}
 
-	func didSetAppOpeningMethod(_ method: AppOpeningMethod?, _ app: OpenableApp) {
-		delegate?.didSetAppOpeningMethod(method, app)
+	func arrowDidRequestQuit() {
+		delegate?.didRequestQuit()
 	}
 }

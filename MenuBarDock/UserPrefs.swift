@@ -22,6 +22,7 @@ enum UserPrefsDefaultValues {
 	static let regularAppsUrls: [URL] = []
     static let rightClickByDefault = false
     static let showDockBadges = true
+    static let showOnlyBadgedApps = true
     static let sideToShowRunningApps: SideToShowRunningApps = .right
     static let statusItemWidth = CGFloat(30)
     static let runningAppsSortingMethod: RunningAppsSortingMethod = .mostRecentOnRight
@@ -42,7 +43,7 @@ class UserPrefs {
     var rightClickByDefault = UserPrefsDefaultValues.rightClickByDefault
     var runningAppsSortingMethod: RunningAppsSortingMethod = UserPrefsDefaultValues.runningAppsSortingMethod
     var showDockBadges = UserPrefsDefaultValues.showDockBadges
-    var hasPromptedForBadgeAccessibility = false
+    var showOnlyBadgedApps = UserPrefsDefaultValues.showOnlyBadgedApps
     var sideToShowRunningApps = UserPrefsDefaultValues.sideToShowRunningApps
     var itemSlotWidth = UserPrefsDefaultValues.statusItemWidth
 
@@ -59,7 +60,7 @@ class UserPrefs {
         rightClickByDefault = UserPrefsDefaultValues.rightClickByDefault
         runningAppsSortingMethod = UserPrefsDefaultValues.runningAppsSortingMethod
         showDockBadges = UserPrefsDefaultValues.showDockBadges
-        // hasPromptedForBadgeAccessibility is deliberately NOT reset — it's a "have we ever" flag, not user-facing
+        showOnlyBadgedApps = UserPrefsDefaultValues.showOnlyBadgedApps
         sideToShowRunningApps = UserPrefsDefaultValues.sideToShowRunningApps
         itemSlotWidth = UserPrefsDefaultValues.statusItemWidth
 		save()
@@ -87,7 +88,7 @@ class UserPrefs {
         UserDefaults.standard.set(rightClickByDefault, forKey: Constants.UserPrefs.rightClickByDefault)
         UserDefaults.standard.set(runningAppsSortingMethod.rawValue, forKey: Constants.UserPrefs.runningAppsSortingMethod)
         UserDefaults.standard.set(showDockBadges, forKey: Constants.UserPrefs.showDockBadges)
-        UserDefaults.standard.set(hasPromptedForBadgeAccessibility, forKey: Constants.UserPrefs.hasPromptedForBadgeAccessibility)
+        UserDefaults.standard.set(showOnlyBadgedApps, forKey: Constants.UserPrefs.showOnlyBadgedApps)
         UserDefaults.standard.set(sideToShowRunningApps.rawValue, forKey: Constants.UserPrefs.sideToShowRunningApps)
 		UserDefaults.standard.set(itemSlotWidth, forKey: Constants.UserPrefs.statusItemWidth)
 	}
@@ -157,8 +158,8 @@ class UserPrefs {
             self.showDockBadges = showDockBadges
         }
 
-        if let hasPromptedForBadgeAccessibility = UserDefaults.standard.object(forKey: Constants.UserPrefs.hasPromptedForBadgeAccessibility) as? Bool {
-            self.hasPromptedForBadgeAccessibility = hasPromptedForBadgeAccessibility
+        if let showOnlyBadgedApps = UserDefaults.standard.object(forKey: Constants.UserPrefs.showOnlyBadgedApps) as? Bool {
+            self.showOnlyBadgedApps = showOnlyBadgedApps
         }
 
         if let sideToShowRunningApps = UserDefaults.standard.object(forKey: Constants.UserPrefs.sideToShowRunningApps) as? String {

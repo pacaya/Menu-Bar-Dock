@@ -29,9 +29,10 @@
 		384CBEAB26226677000B08FC /* MenuBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384CBEAA26226677000B08FC /* MenuBarItem.swift */; };
 		384CBEB926227329000B08FC /* OpenableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384CBEB826227329000B08FC /* OpenableApp.swift */; };
 		384CBEBF262276A9000B08FC /* OpenableApps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384CBEBE262276A9000B08FC /* OpenableApps.swift */; };
+		3875B2B6222E1EF70042D748 /* Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38E394E3222D778F006F926E /* Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		38AAAA0100000001A6B6A0DD /* ArrowMenuBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38AAAA0000000001A6B6A0DD /* ArrowMenuBarItem.swift */; };
 		38BADE0100000001A6B6A0DD /* BadgeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BADE0000000001A6B6A0DD /* BadgeMonitor.swift */; };
 		38BADE0300000001A6B6A0DD /* BadgeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BADE0200000001A6B6A0DD /* BadgeRenderer.swift */; };
-		3875B2B6222E1EF70042D748 /* Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38E394E3222D778F006F926E /* Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		38D723EB222D8D8600D6F079 /* Launcher.app in Resources */ = {isa = PBXBuildFile; fileRef = 38E394E3222D778F006F926E /* Launcher.app */; };
 		38E394E6222D778F006F926E /* AppDelegateLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E394E5222D778F006F926E /* AppDelegateLauncher.swift */; };
 		38E394EA222D7790006F926E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38E394E9222D7790006F926E /* Assets.xcassets */; };
@@ -113,6 +114,7 @@
 		384CBEAA26226677000B08FC /* MenuBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItem.swift; sourceTree = "<group>"; };
 		384CBEB826227329000B08FC /* OpenableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenableApp.swift; sourceTree = "<group>"; };
 		384CBEBE262276A9000B08FC /* OpenableApps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenableApps.swift; sourceTree = "<group>"; };
+		38AAAA0000000001A6B6A0DD /* ArrowMenuBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowMenuBarItem.swift; sourceTree = "<group>"; };
 		38BADE0000000001A6B6A0DD /* BadgeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeMonitor.swift; sourceTree = "<group>"; };
 		38BADE0200000001A6B6A0DD /* BadgeRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeRenderer.swift; sourceTree = "<group>"; };
 		38E394E3222D778F006F926E /* Launcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Launcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -229,6 +231,7 @@
 				384CBEA426226333000B08FC /* MenuBarItems.swift */,
 				384CBEB826227329000B08FC /* OpenableApp.swift */,
 				384CBEBE262276A9000B08FC /* OpenableApps.swift */,
+				38AAAA0000000001A6B6A0DD /* ArrowMenuBarItem.swift */,
 				38BADE0000000001A6B6A0DD /* BadgeMonitor.swift */,
 				38BADE0200000001A6B6A0DD /* BadgeRenderer.swift */,
 				384319142626487200A6B6A0 /* RunningApp.swift */,
@@ -588,6 +591,7 @@
 				384318F82624A36A00A6B6A0 /* RunningApps.swift in Sources */,
 				38412F02222B3E2F00D3FA0C /* PreferencesViewController.swift in Sources */,
 				384CBEBF262276A9000B08FC /* OpenableApps.swift in Sources */,
+				38AAAA0100000001A6B6A0DD /* ArrowMenuBarItem.swift in Sources */,
 				38BADE0100000001A6B6A0DD /* BadgeMonitor.swift in Sources */,
 				38BADE0300000001A6B6A0DD /* BadgeRenderer.swift in Sources */,
 				38412F00222B3E2F00D3FA0C /* AppDelegate.swift in Sources */,
@@ -712,7 +716,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -768,7 +772,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -789,14 +793,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = MenuBarDock/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 4.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ethansk.MenuBarDock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -817,14 +821,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = MenuBarDock/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 4.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ethansk.MenuBarDock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -842,7 +846,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				INFOPLIST_FILE = MenuBarDockTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -866,7 +870,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				INFOPLIST_FILE = MenuBarDockTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -889,7 +893,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				INFOPLIST_FILE = MenuBarDockUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -912,7 +916,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				INFOPLIST_FILE = MenuBarDockUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -936,7 +940,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Launcher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -960,7 +964,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = T34G959ZG8;
+				DEVELOPMENT_TEAM = B683BLK595;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Launcher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

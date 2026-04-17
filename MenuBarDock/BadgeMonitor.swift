@@ -27,6 +27,7 @@ final class BadgeMonitor {
     weak var delegate: BadgeMonitorDelegate?
 
     private var timer: Timer?
+    private var permissionWaitTimer: Timer?
     private var observedAppNames: Set<String> = []
     private var cachedBadges: [String: String] = [:]
     private var dockElement: AXUIElement?
@@ -44,6 +45,10 @@ final class BadgeMonitor {
     }
 
     func start() {
+        // If a permission-wait poll is pending, it's no longer needed.
+        permissionWaitTimer?.invalidate()
+        permissionWaitTimer = nil
+
         guard timer == nil else { return }
         ticksSincePermissionRecheck = 0
         let t = Timer(timeInterval: tickInterval, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
@@ -56,6 +61,8 @@ final class BadgeMonitor {
     func stop() {
         timer?.invalidate()
         timer = nil
+        permissionWaitTimer?.invalidate()
+        permissionWaitTimer = nil
         dockElement = nil
 
         if !cachedBadges.isEmpty {
@@ -63,6 +70,28 @@ final class BadgeMonitor {
             cachedBadges.removeAll()
             delegate?.badgesDidChange([:], changedAppNames: staleNames)
         }
+    }
+
+    /// If AX is already trusted, starts the monitor immediately. Otherwise
+    /// polls `AXIsProcessTrusted()` once per second (no system prompt) and
+    /// starts automatically once the user grants access. Idempotent: safe to
+    /// call when the monitor is already running or a wait is already pending.
+    func waitForPermissionThenStart() {
+        if AXIsProcessTrusted() {
+            start()
+            return
+        }
+        guard timer == nil, permissionWaitTimer == nil else { return }
+        let t = Timer(timeInterval: 1.0, target: self, selector: #selector(permissionWaitTick), userInfo: nil, repeats: true)
+        RunLoop.main.add(t, forMode: .common)
+        permissionWaitTimer = t
+    }
+
+    @objc private func permissionWaitTick() {
+        guard AXIsProcessTrusted() else { return }
+        permissionWaitTimer?.invalidate()
+        permissionWaitTimer = nil
+        start()
     }
 
     func setObservedApps(_ apps: [OpenableApp]) {
